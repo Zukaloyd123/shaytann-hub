@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SHAYTANN HUB</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=VT323&family=Press+Start+2P&display=swap" rel="stylesheet">
+  <style>
+    body {
+      background: #000;
+      color: #00ff00;
+      font-family: 'VT323', monospace;
+      overflow-x: hidden;
+    }
+    .glitch {
+      animation: glitch 1s infinite;
+    }
+    @keyframes glitch {
+      0% { text-shadow: 2px 0 #ff00ff, -2px 0 #00ffff; }
+      20% { text-shadow: -2px 0 #ff00ff, 2px 0 #00ffff; }
+      40% { text-shadow: 2px 0 #ff00ff, -2px 0 #00ffff; }
+    }
+    .terminal {
+      background: rgba(0, 30, 0, 0.95);
+      border: 2px solid #00ff00;
+      box-shadow: 0 0 20px #00ff00;
+    }
+    .scanlines {
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: repeating-linear-gradient(
+        to bottom,
+        transparent 0px,
+        transparent 2px,
+        rgba(0, 255, 0, 0.05) 2px,
+        rgba(0, 255, 0, 0.05) 4px
+      );
+      pointer-events: none;
+      z-index: 9999;
+      animation: scan 4s linear infinite;
+    }
+    @keyframes scan { 0% { transform: translateY(-100%); } 100% { transform: translateY(100%); } }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col">
+
+  <div id="boot-screen" class="fixed inset-0 bg-black z-50 flex items-center justify-center text-green-400 font-mono text-xl">
+    <div class="terminal p-8 max-w-2xl w-full">
+      <pre id="boot-text" class="text-left"></pre>
+    </div>
+  </div>
+
+  <header class="border-b border-green-500 p-4 flex justify-between items-center">
+    <div class="text-4xl glitch font-bold tracking-widest" style="font-family: 'Press Start 2P', cursive;">
+      SHAYTANN HUB
+    </div>
+    <nav class="flex gap-8 text-2xl">
+      <a href="#" onclick="showSection('main')" class="hover:text-white transition">MAIN</a>
+      <a href="#" onclick="showSection('download')" class="hover:text-white transition">DOWNLOAD</a>
+      <a href="#" onclick="showSection('about')" class="hover:text-white transition">ABOUT</a>
+    </nav>
+  </header>
+
+  <section id="main" class="flex-1 p-8">
+    <div class="max-w-4xl mx-auto">
+      <h1 class="text-5xl mb-6 text-center">SHAYTANN HUB</h1>
+      <p class="text-2xl leading-relaxed text-center">
+        Shaytann Hub - personal website of a Russian dev, dedicated to his programs for installation and familiarization.<br>
+        For now, there is only one pack with programs for virus detection and research, but in the future there will be a lot more!
+      </p>
+    </div>
+  </section>
+
+  <section id="download" class="flex-1 p-8 hidden">
+    <div class="max-w-4xl mx-auto">
+      <h2 class="text-4xl mb-8 text-center">DOWNLOAD</h2>
+      <div class="terminal p-6 mb-8">
+        <p class="text-2xl">Virus Analysis Pack v1.0</p>
+        <p class="text-xl">Size: 569 MB</p>
+        <p class="text-xl mt-2">Pack of tools for malware detection and analysis.</p>
+        <a href="https://github.com/ТВОЙ_НИК/shaytann-hub/releases/download/v1.0/pack.zip" 
+           class="inline-block mt-6 bg-green-500 text-black px-8 py-4 text-2xl hover:bg-white transition">
+          ↓ DOWNLOAD
+        </a>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <img src="screenshot1.jpg" class="border border-green-500" alt="Screenshot 1">
+        <img src="screenshot2.jpg" class="border border-green-500" alt="Screenshot 2">
+        <img src="screenshot3.jpg" class="border border-green-500" alt="Screenshot 3">
+      </div>
+    </div>
+  </section>
+
+  <section id="about" class="flex-1 p-8 hidden">
+    <div class="max-w-3xl mx-auto text-xl leading-relaxed">
+      <p>My name is Shaytann (old nick - peredozz). I make various programs in Python, and earlier I worked with C# (Unity).</p>
+      <p class="mt-4">I really like the theme of coding and hacking, but I do it just for myself.</p>
+      <p class="mt-8">Contacts:<br>
+        Discord: shaytann_snoweater<br>
+        TG: @Paul_Du_Rovve
+      </p>
+    </div>
+  </section>
+
+  <footer class="border-t border-green-500 p-4 text-center text-sm mt-auto">
+    made by shaytann for everyone. 2025-2026.
+  </footer>
+
+  <div class="scanlines"></div>
+
+  <script>
+    const bootLines = [
+      "Initializing SHAYTANN OS v.2026...",
+      "Loading kernel...",
+      "Establishing secure connection...",
+      "Bypassing firewall...",
+      "Accessing dark web nodes...",
+      "Decrypting user data...",
+      "Welcome, hacker."
+    ];
+
+    let i = 0;
+    const bootEl = document.getElementById('boot-text');
+    const interval = setInterval(() => {
+      if (i < bootLines.length) {
+        bootEl.innerHTML += bootLines[i] + '<br>';
+        i++;
+      } else {
+        clearInterval(interval);
+        setTimeout(() => {
+          document.getElementById('boot-screen').style.opacity = '0';
+          setTimeout(() => document.getElementById('boot-screen').style.display = 'none', 800);
+        }, 800);
+      }
+    }, 400);
+
+    function showSection(section) {
+      document.querySelectorAll('section').forEach(s => s.classList.add('hidden'));
+      document.getElementById(section).classList.remove('hidden');
+    }
+
+    showSection('main');
+
+  </script>
+</body>
+</html>
