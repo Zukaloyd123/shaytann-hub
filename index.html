@@ -41,17 +41,30 @@
       animation: scan 4s linear infinite;
     }
     @keyframes scan { 0% { transform: translateY(-100%); } 100% { transform: translateY(100%); } }
+
+    .typing {
+      overflow: hidden;
+      border-right: .15em solid #00ff00;
+      white-space: pre-wrap;
+      animation: blink-caret .75s step-end infinite;
+    }
+    @keyframes blink-caret {
+      from, to { border-color: transparent; }
+      50% { border-color: #00ff00; }
+    }
   </style>
 </head>
 <body class="min-h-screen flex flex-col">
 
+  <!-- FAKE BOOT SCREEN -->
   <div id="boot-screen" class="fixed inset-0 bg-black z-50 flex items-center justify-center text-green-400 font-mono text-xl">
     <div class="terminal p-8 max-w-2xl w-full">
       <pre id="boot-text" class="text-left"></pre>
     </div>
   </div>
 
-  <header class="border-b border-green-500 p-4 flex justify-between items-center">
+  <!-- HEADER -->
+  <header class="border-b border-green-500 p-4 flex justify-between items-center bg-black">
     <div class="text-4xl glitch font-bold tracking-widest" style="font-family: 'Press Start 2P', cursive;">
       SHAYTANN HUB
     </div>
@@ -62,16 +75,18 @@
     </nav>
   </header>
 
+  <!-- MAIN SECTION -->
   <section id="main" class="flex-1 p-8">
     <div class="max-w-4xl mx-auto">
       <h1 class="text-5xl mb-6 text-center">SHAYTANN HUB</h1>
-      <p class="text-2xl leading-relaxed text-center">
-        Shaytann Hub - personal website of a Russian dev, dedicated to his programs for installation and familiarization.<br>
-        For now, there is only one pack with programs for virus detection and research, but in the future there will be a lot more!
-      </p>
+      
+      <div class="terminal p-8 text-2xl leading-relaxed min-h-[220px]">
+        <span id="typing-text" class="typing"></span>
+      </div>
     </div>
   </section>
 
+  <!-- DOWNLOAD SECTION -->
   <section id="download" class="flex-1 p-8 hidden">
     <div class="max-w-4xl mx-auto">
       <h2 class="text-4xl mb-8 text-center">DOWNLOAD</h2>
@@ -80,8 +95,8 @@
         <p class="text-xl">Size: 569 MB</p>
         <p class="text-xl mt-2">Pack of tools for malware detection and analysis.</p>
         <a href="https://github.com/ТВОЙ_НИК/shaytann-hub/releases/download/v1.0/pack.zip" 
-           class="inline-block mt-6 bg-green-500 text-black px-8 py-4 text-2xl hover:bg-white transition">
-          ↓ DOWNLOAD
+           class="inline-block mt-6 bg-green-500 text-black px-8 py-4 text-2xl hover:bg-white transition font-bold">
+          ↓ DOWNLOAD (569 MB)
         </a>
       </div>
 
@@ -93,8 +108,9 @@
     </div>
   </section>
 
+  <!-- ABOUT SECTION -->
   <section id="about" class="flex-1 p-8 hidden">
-    <div class="max-w-3xl mx-auto text-xl leading-relaxed">
+    <div class="max-w-3xl mx-auto terminal p-8 text-xl leading-relaxed">
       <p>My name is Shaytann (old nick - peredozz). I make various programs in Python, and earlier I worked with C# (Unity).</p>
       <p class="mt-4">I really like the theme of coding and hacking, but I do it just for myself.</p>
       <p class="mt-8">Contacts:<br>
@@ -104,13 +120,15 @@
     </div>
   </section>
 
-  <footer class="border-t border-green-500 p-4 text-center text-sm mt-auto">
+  <!-- FOOTER -->
+  <footer class="border-t border-green-500 p-4 text-center text-sm mt-auto bg-black">
     made by shaytann for everyone. 2025-2026.
   </footer>
 
   <div class="scanlines"></div>
 
   <script>
+    // Fake Boot Screen
     const bootLines = [
       "Initializing SHAYTANN OS v.2026...",
       "Loading kernel...",
@@ -123,26 +141,51 @@
 
     let i = 0;
     const bootEl = document.getElementById('boot-text');
-    const interval = setInterval(() => {
+    const bootInterval = setInterval(() => {
       if (i < bootLines.length) {
         bootEl.innerHTML += bootLines[i] + '<br>';
         i++;
       } else {
-        clearInterval(interval);
+        clearInterval(bootInterval);
         setTimeout(() => {
           document.getElementById('boot-screen').style.opacity = '0';
           setTimeout(() => document.getElementById('boot-screen').style.display = 'none', 800);
-        }, 800);
+        }, 600);
       }
-    }, 400);
+    }, 350);
 
+    // Typing Effect
+    const text = `Shaytann Hub - personal website of a Russian dev.\n\nDedicated to his programs for installation and familiarization.\n\nFor now, there is only one pack with programs for virus detection and research.\nBut in the future there will be much more...`;
+    
+    let index = 0;
+    const typingElement = document.getElementById('typing-text');
+
+    function type() {
+      if (index < text.length) {
+        typingElement.innerHTML += text.charAt(index) === '\n' ? '<br>' : text.charAt(index);
+        index++;
+        setTimeout(type, 25); // скорость печати (меньше = быстрее)
+      }
+    }
+
+    // Section switch
     function showSection(section) {
       document.querySelectorAll('section').forEach(s => s.classList.add('hidden'));
       document.getElementById(section).classList.remove('hidden');
+      
+      // Перезапускаем typing при возвращении на main
+      if (section === 'main' && index >= text.length) {
+        index = 0;
+        typingElement.innerHTML = '';
+        setTimeout(type, 300);
+      }
     }
 
-    showSection('main');
-
+    // Start
+    window.onload = () => {
+      showSection('main');
+      setTimeout(type, 1200); // начинаем печать после загрузки
+    };
   </script>
 </body>
 </html>
