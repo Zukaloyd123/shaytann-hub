@@ -14,7 +14,7 @@
       overflow-x: hidden;
     }
     .glitch {
-      animation: glitch 1s infinite;
+      animation: glitch 0.8s infinite;
     }
     @keyframes glitch {
       0% { text-shadow: 2px 0 #ff00ff, -2px 0 #00ffff; }
@@ -22,20 +22,14 @@
       40% { text-shadow: 2px 0 #ff00ff, -2px 0 #00ffff; }
     }
     .terminal {
-      background: rgba(0, 30, 0, 0.95);
+      background: rgba(0, 25, 0, 0.95);
       border: 2px solid #00ff00;
-      box-shadow: 0 0 20px #00ff00;
+      box-shadow: 0 0 25px #00ff00;
     }
     .scanlines {
       position: fixed;
       top: 0; left: 0; width: 100%; height: 100%;
-      background: repeating-linear-gradient(
-        to bottom,
-        transparent 0px,
-        transparent 2px,
-        rgba(0, 255, 0, 0.05) 2px,
-        rgba(0, 255, 0, 0.05) 4px
-      );
+      background: repeating-linear-gradient(to bottom, transparent 0px, transparent 2px, rgba(0,255,0,0.06) 2px, rgba(0,255,0,0.06) 4px);
       pointer-events: none;
       z-index: 9999;
       animation: scan 4s linear infinite;
@@ -44,13 +38,30 @@
 
     .typing {
       overflow: hidden;
-      border-right: .15em solid #00ff00;
+      border-right: 0.2em solid #00ff41;
       white-space: pre-wrap;
-      animation: blink-caret .75s step-end infinite;
+      animation: blink-caret 0.7s step-end infinite;
     }
     @keyframes blink-caret {
       from, to { border-color: transparent; }
-      50% { border-color: #00ff00; }
+      50% { border-color: #00ff41; }
+    }
+
+    /* Lightbox */
+    .lightbox {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0,0,0,0.95);
+      z-index: 10000;
+      align-items: center;
+      justify-content: center;
+    }
+    .lightbox img {
+      max-width: 95%;
+      max-height: 95%;
+      border: 3px solid #00ff00;
+      box-shadow: 0 0 40px #00ff00;
     }
   </style>
 </head>
@@ -75,48 +86,42 @@
     </nav>
   </header>
 
-  <!-- MAIN SECTION -->
+  <!-- MAIN -->
   <section id="main" class="flex-1 p-8">
     <div class="max-w-4xl mx-auto">
       <h1 class="text-5xl mb-6 text-center">SHAYTANN HUB</h1>
-      
-      <div class="terminal p-8 text-2xl leading-relaxed min-h-[220px]">
-        <span id="typing-text" class="typing"></span>
+      <div class="terminal p-8 text-2xl leading-relaxed min-h-[260px]">
+        <span id="typing-main" class="typing"></span>
       </div>
     </div>
   </section>
 
-  <!-- DOWNLOAD SECTION -->
+  <!-- DOWNLOAD -->
   <section id="download" class="flex-1 p-8 hidden">
     <div class="max-w-4xl mx-auto">
       <h2 class="text-4xl mb-8 text-center">DOWNLOAD</h2>
-      <div class="terminal p-6 mb-8">
-        <p class="text-2xl">Virus Analysis Pack v1.0</p>
-        <p class="text-xl">Size: 569 MB</p>
-        <p class="text-xl mt-2">Pack of tools for malware detection and analysis.</p>
+      <div class="terminal p-6 mb-10">
+        <p class="text-3xl">Virus Analysis Pack v1.0</p>
+        <p class="text-2xl">Size: 569 MB</p>
+        <p class="text-xl mt-3">Pack of tools for malware detection and research.</p>
         <a href="https://github.com/ТВОЙ_НИК/shaytann-hub/releases/download/v1.0/pack.zip" 
-           class="inline-block mt-6 bg-green-500 text-black px-8 py-4 text-2xl hover:bg-white transition font-bold">
-          ↓ DOWNLOAD (569 MB)
+           class="inline-block mt-6 bg-green-500 hover:bg-white text-black px-10 py-5 text-3xl font-bold transition">
+          ↓ DOWNLOAD
         </a>
       </div>
 
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <img src="screenshot1.jpg" class="border border-green-500" alt="Screenshot 1">
-        <img src="screenshot2.jpg" class="border border-green-500" alt="Screenshot 2">
-        <img src="screenshot3.jpg" class="border border-green-500" alt="Screenshot 3">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6" id="screenshots">
+        <!-- Скриншоты будут добавлены через JS -->
       </div>
     </div>
   </section>
 
-  <!-- ABOUT SECTION -->
+  <!-- ABOUT -->
   <section id="about" class="flex-1 p-8 hidden">
-    <div class="max-w-3xl mx-auto terminal p-8 text-xl leading-relaxed">
-      <p>My name is Shaytann (old nick - peredozz). I make various programs in Python, and earlier I worked with C# (Unity).</p>
-      <p class="mt-4">I really like the theme of coding and hacking, but I do it just for myself.</p>
-      <p class="mt-8">Contacts:<br>
-        Discord: shaytann_snoweater<br>
-        TG: @Paul_Du_Rovve
-      </p>
+    <div class="max-w-3xl mx-auto">
+      <div class="terminal p-8 text-xl leading-relaxed">
+        <span id="typing-about" class="typing"></span>
+      </div>
     </div>
   </section>
 
@@ -125,28 +130,22 @@
     made by shaytann for everyone. 2025-2026.
   </footer>
 
+  <!-- LIGHTBOX -->
+  <div id="lightbox" class="lightbox" onclick="this.style.display='none'">
+    <img id="lightbox-img" src="" alt="">
+  </div>
+
   <div class="scanlines"></div>
 
   <script>
-    // Fake Boot Screen
-    const bootLines = [
-      "Initializing SHAYTANN OS v.2026...",
-      "Loading kernel...",
-      "Establishing secure connection...",
-      "Bypassing firewall...",
-      "Accessing dark web nodes...",
-      "Decrypting user data...",
-      "Welcome, hacker."
-    ];
-
+    // === BOOT SCREEN ===
+    const bootLines = ["Initializing SHAYTANN OS v.2026...","Loading kernel...","Establishing secure connection...","Bypassing firewall...","Accessing dark web nodes...","Decrypting user data...","Welcome, hacker."];
     let i = 0;
     const bootEl = document.getElementById('boot-text');
-    const bootInterval = setInterval(() => {
-      if (i < bootLines.length) {
-        bootEl.innerHTML += bootLines[i] + '<br>';
-        i++;
-      } else {
-        clearInterval(bootInterval);
+    const bootInt = setInterval(() => {
+      if (i < bootLines.length) bootEl.innerHTML += bootLines[i++] + '<br>';
+      else {
+        clearInterval(bootInt);
         setTimeout(() => {
           document.getElementById('boot-screen').style.opacity = '0';
           setTimeout(() => document.getElementById('boot-screen').style.display = 'none', 800);
@@ -154,37 +153,63 @@
       }
     }, 350);
 
-    // Typing Effect
-    const text = `Shaytann Hub - personal website of a Russian dev.\n\nDedicated to his programs for installation and familiarization.\n\nFor now, there is only one pack with programs for virus detection and research.\nBut in the future there will be much more...`;
-    
-    let index = 0;
-    const typingElement = document.getElementById('typing-text');
+    // === TYPING EFFECT ===
+    function createTyping(elementId, text, speed = 30) {
+      let index = 0;
+      const el = document.getElementById(elementId);
+      el.innerHTML = '';
 
-    function type() {
-      if (index < text.length) {
-        typingElement.innerHTML += text.charAt(index) === '\n' ? '<br>' : text.charAt(index);
-        index++;
-        setTimeout(type, 25); // скорость печати (меньше = быстрее)
+      function type() {
+        if (index < text.length) {
+          el.innerHTML += text[index] === '\n' ? '<br>' : text[index];
+          index++;
+          setTimeout(type, speed);
+        }
       }
+      return { start: () => setTimeout(type, 300) };
     }
 
-    // Section switch
+    const mainText = `Shaytann Hub - personal website of a Russian dev.\n\nDedicated to his programs for installation and familiarization.\n\nRight now there's only one pack with virus detection and analysis tools.\nBut soon there will be much more...`;
+    const aboutText = `My name is Shaytann (old nick - peredozz).\n\nI develop programs mainly in Python, previously worked with C# (Unity).\n\nI love coding and hacking topics, but I do it purely for myself.\n\nContacts:\nDiscord: shaytann_snoweater\nTG: @Paul_Du_Rovve`;
+
+    let mainTyping, aboutTyping;
+
+    // === SECTION SWITCH ===
     function showSection(section) {
       document.querySelectorAll('section').forEach(s => s.classList.add('hidden'));
       document.getElementById(section).classList.remove('hidden');
-      
-      // Перезапускаем typing при возвращении на main
-      if (section === 'main' && index >= text.length) {
-        index = 0;
-        typingElement.innerHTML = '';
-        setTimeout(type, 300);
-      }
+
+      if (section === 'main' && mainTyping) mainTyping.start();
+      if (section === 'about' && aboutTyping) aboutTyping.start();
     }
 
-    // Start
+    // === LIGHTBOX ===
+    function openImage(src) {
+      document.getElementById('lightbox-img').src = src;
+      document.getElementById('lightbox').style.display = 'flex';
+    }
+
+    // === INIT ===
     window.onload = () => {
       showSection('main');
-      setTimeout(type, 1200); // начинаем печать после загрузки
+
+      // Typing instances
+      mainTyping = createTyping('typing-main', mainText, 28);
+      aboutTyping = createTyping('typing-about', aboutText, 35);
+
+      mainTyping.start();
+
+      // Добавляем скриншоты (замени имена файлов на свои)
+      const screenshotsContainer = document.getElementById('screenshots');
+      const shots = ['screenshot1.jpg', 'screenshot2.jpg', 'screenshot3.jpg'];
+
+      shots.forEach(src => {
+        const div = document.createElement('div');
+        div.className = "cursor-pointer border-2 border-green-500 hover:border-white transition";
+        div.innerHTML = `<img src="${src}" class="w-full" alt="Screenshot">`;
+        div.onclick = () => openImage(src);
+        screenshotsContainer.appendChild(div);
+      });
     };
   </script>
 </body>
